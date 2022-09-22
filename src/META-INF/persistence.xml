@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+	
+	<persistence-unit name="jpa-iPASP-StageDB">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<jta-data-source>PracticeDB</jta-data-source>
+
+		<properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.SQLServer2012Dialect" />
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.SQLServerDialect"/> -->
+			<!-- <property name="tomee.jpa.factory.lazy" value="true" /> 
+			    first one will make the factory created on first use at runtime and second one just 
+				disable cdi. Both work cause you don't need CDI when JPA is initialized during 
+				startup (tomee creates the factory before starting cdi cause cdi can rely 
+				on it - chicken egg problem) -->
+			<property name="tomee.jpa.cdi" value="false" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="transaction.factory_class" value="org.hibernate.transaction.JTATransactionFactory" />
+			<property name="connection.autoReconnect" value="true" />
+			<property name="connection.autoReconnectForPools" value="true" />
+			<property name="connection.is-connection-validation-required" value="true" />
+			<!-- 
+			<property name="hibernate.show_sql" value="true" /> 
+			<property name="hibernate.format_sql" value="true" /> 
+			<property name="hibernate.use_sql_comments" value="true" /> 
+			-->
+		</properties>
+	</persistence-unit>
+	
+</persistence>
