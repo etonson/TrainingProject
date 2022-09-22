@@ -49,7 +49,8 @@ public class MaintainDepartmentRest {
 	@POST
 	public String sumOrderQuantityByDepartment(String departmentName) {
 		int count = m1.sumOrderQuantityByDepartment(departmentName);
-		return String.valueOf(count);
+		System.out.println("count--->"+count);
+		return "result:"+String.valueOf(count);
 	}
 
 }
