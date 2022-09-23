@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -24,7 +23,6 @@ public class Department  implements Serializable {
 	private List<Section> sections;
 
     @OneToOne
-//    @JoinColumn(name="MANAGER_EMPLOYEE_ID")
 	private Person manager;
 
 	public Department() {

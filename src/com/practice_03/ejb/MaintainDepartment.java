@@ -21,10 +21,10 @@ public class MaintainDepartment extends SuperEJB implements IMaintainDepartment 
 		String indexNmae = departmentName;
 		List<Person> persons = new ArrayList<Person>();
 		try {
-			Query query = em.createNativeQuery("SELECT * " + "	from Person as person"
-					+ "		 LEFT JOIN Section as section on  section.MANAGER_EMPLOYEE_ID =person.EMPLOYEE_ID\r\n"
-					+ "		 LEFT JOIN Department as department on department. MANAGER_EMPLOYEE_ID =  section.MANAGER_EMPLOYEE_ID \r\n"
-					+ "			where department.DEPARTMENT_NAME = :departmentName ", Person.class);
+			Query query = em.createNativeQuery("SELECT * from Person as person"
+					+ " LEFT JOIN Section as section on  section.MANAGER_EMPLOYEE_ID =person.EMPLOYEE_ID "
+					+ " LEFT JOIN Department as department on department. MANAGER_EMPLOYEE_ID =  section.MANAGER_EMPLOYEE_ID"
+					+ "	where department.DEPARTMENT_NAME = :departmentName ", Person.class);
 			query.setParameter("departmentName", indexNmae);
 			persons = query.getResultList();
 		} catch (Exception ex) {

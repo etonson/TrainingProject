@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -22,6 +23,24 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  *
  */
 @Entity
+@NamedNativeQuery(name = "findByFilterJPQL2"
+, query = "SELECT Machine.no"
+		+ ",Machine.version"
+		+ ",Machine.internalUsage"
+		+ ",Machine.name"
+		+ ",Machine.machineextraInfo_no"
+		+ ",Machine.machineextraInfo_version"
+		+ ",Machine.area_Id"
+		+ " FROM Machine"
+		+ " LEFT JOIN area on Area.ID=Machine.area_Id"
+		+ " LEFT JOIN MachineExtraInfo on MachineExtraInfo.no=Machine.no"
+		+ " where Machine.no in (SELECT MachineWorkingTime.machine_Id"
+		+ " FROM MachineWorkingTime"
+		+ " GROUP BY MachineWorkingTime.machine_Id"
+		+ " having count(*)= :machineWorkingTime )"
+		+ " and Area.name= :areaName"
+		+ " and MachineExtraInfo.machine_name_alias= :machineNameAlias"		
+, resultClass = Machine.class)
 public class Machine implements Serializable {
 
 	/**

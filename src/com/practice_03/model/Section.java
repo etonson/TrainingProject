@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-//@Data
 public class Section implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

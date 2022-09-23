@@ -155,29 +155,34 @@ public class Q02_FindObjectFromDatabase_Multi extends SuperEJB implements FindOb
 			tx.begin();
 //			**************************************
 			// TODO Auto-generated method stub
-			Query query = em.createNativeQuery(
-					"SELECT Machine.no"
-					+ ",Machine.version"
-					+ ",Machine.internalUsage"
-					+ ",Machine.name"
-					+ ",Machine.machineextraInfo_no"
-					+ ",Machine.machineextraInfo_version"
-					+ ",Machine.area_Id"
-					+ " FROM Machine"
-					+ " LEFT JOIN area on Area.ID=Machine.area_Id"
-					+ " LEFT JOIN MachineExtraInfo on MachineExtraInfo.no=Machine.no"
-					+ " where Machine.no in (SELECT MachineWorkingTime.machine_Id"
-					+ " FROM MachineWorkingTime"
-					+ " GROUP BY MachineWorkingTime.machine_Id"
-					+ " having count(*)= :machineWorkingTime )"
-					+ " and Area.name= :areaName"
-					+ " and MachineExtraInfo.machine_name_alias= :machineNameAlias"
-					,Machine.class);
+//			Query query = em.createNativeQuery(
+//					"SELECT Machine.no"
+//					+ ",Machine.version"
+//					+ ",Machine.internalUsage"
+//					+ ",Machine.name"
+//					+ ",Machine.machineextraInfo_no"
+//					+ ",Machine.machineextraInfo_version"
+//					+ ",Machine.area_Id"
+//					+ " FROM Machine"
+//					+ " LEFT JOIN area on Area.ID=Machine.area_Id"
+//					+ " LEFT JOIN MachineExtraInfo on MachineExtraInfo.no=Machine.no"
+//					+ " where Machine.no in (SELECT MachineWorkingTime.machine_Id"
+//					+ " FROM MachineWorkingTime"
+//					+ " GROUP BY MachineWorkingTime.machine_Id"
+//					+ " having count(*)= :machineWorkingTime )"
+//					+ " and Area.name= :areaName"
+//					+ " and MachineExtraInfo.machine_name_alias= :machineNameAlias"
+//					,Machine.class);
+//			query.setParameter("areaName",areaName);
+//			query.setParameter("machineNameAlias", machineNameAlias);
+//			query.setParameter("machineWorkingTime", machineWorkingTime);
+			Query query = em.createNamedQuery("findByFilterJPQL2",Machine.class);
 			query.setParameter("areaName",areaName);
 			query.setParameter("machineNameAlias", machineNameAlias);
 			query.setParameter("machineWorkingTime", machineWorkingTime);
-
+			
 			machines = query.getResultList();
+//			machines = query.getResultList();
 
 //			**************************************
 			tx.commit();
