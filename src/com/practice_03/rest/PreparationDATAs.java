@@ -1,13 +1,23 @@
 package com.practice_03.rest;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
+import org.hibernate.tool.schema.TargetType;
 
 import com.practice_03.model.Department;
 import com.practice_03.model.Order;
@@ -130,6 +140,7 @@ public class PreparationDATAs {
 			section02.setOwnOrders(orders02);
 			iSection.doMergeOrder(section01);
 			iSection.doMergeOrder(section02);
+			
 
 		} catch (Exception e) {
 			e.fillInStackTrace();
