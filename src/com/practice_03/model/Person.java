@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import lombok.Data;
 
@@ -20,6 +21,13 @@ public class Person implements Serializable {
 	@Column(columnDefinition = "nvarchar(50)")
 	private String name;
 
+	@OneToOne(mappedBy = "manager") 
+	private Department department;
+	
+	@OneToOne(mappedBy = "manager") 
+	private Section section;
+	
+	
 	public Person() {
 	}
 

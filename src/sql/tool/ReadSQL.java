@@ -1,77 +1,95 @@
 package sql.tool;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+
+
+import java.io.File;
+import java.io.FileFilter;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
-import sql.tool.suport.SQLStatementDeal;
 
 public class ReadSQL {
 
-	public static void main(String[] args) {
-		try {
-			String sqlList = loadSql("D:\\pwd\\updateExport.sql");
-			SQLStatementDeal stool = new SQLStatementDeal(sqlList);
-			String[] strArray = stool.sqlQuery2Array();
-			for(int i =0 ; i<strArray.length;i++) 
-			{
-				String str = stool.removeCons(strArray[i]);
-				System.out.println(str);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+public static void main(String[] args) {
+	
+}
+public static List<Class> getClasssFromPackage(String pack) {
+	  List<Class> clazzs = new ArrayList<Class>();
+
+	  // 是否循環搜索子包
+	  boolean recursive = true;
+
+	  // 包名字
+	  String packageName = pack;
+	  // 包名對應的路徑名稱
+	  String packageDirName = packageName.replace('.', '/');
+
+	  Enumeration<URL> dirs;
+
+	  try {
+	    dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
+	    while (dirs.hasMoreElements()) {
+	      URL url = dirs.nextElement();
+
+	      String protocol = url.getProtocol();
+
+	      if ("file".equals(protocol)) {
+	        System.out.println("file類型的掃描");
+	        String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
+	        findClassInPackageByFile(packageName, filePath, recursive, clazzs);
+	      } else if ("jar".equals(protocol)) {
+	        System.out.println("jar類型的掃描");
+	      }
+	    }
+
+	  } catch (Exception e) {
+	    e.printStackTrace();
+	  }
+
+	  return clazzs;
 	}
+/**
+ * 在package對應的路徑下找到所有的class
+ * 
+ * @param packageName
+ *            package名稱
+ * @param filePath
+ *            package對應的路徑
+ * @param recursive
+ *            是否查找子package
+ * @param clazzs
+ *            找到class以後存放的集合
+ */
+public static void findClassInPackageByFile(String packageName, String filePath, final boolean recursive, List<Class> clazzs) {
+  File dir = new File(filePath);
+  if (!dir.exists() || !dir.isDirectory()) {
+    return;
+  }
+  // 在給定的目錄下找到所有的文件，並且進行條件過濾
+  File[] dirFiles = dir.listFiles(new FileFilter() {
 
-	/**
-	 * 讀取 SQL 檔案,獲取 SQL 語句
-	 * 
-	 * @param sqlFile SQL 指令碼檔案
-	 * @return List<sql> 返回所有 SQL 語句的 List
-	 * @throws Exception
-	 */
-	private static String loadSql(String sqlFile) throws Exception {
-		List<String> sqlList = new ArrayList<String>();
-		try (InputStream sqlFileIn = new FileInputStream(sqlFile);) {
-			StringBuffer sqlSb = new StringBuffer();
-			byte[] buff = new byte[1024];
-			int byteRead = 0;
-			while ((byteRead = sqlFileIn.read(buff)) != -1) {
-				sqlSb.append(new String(buff, 0, byteRead));
-			}
-			// Windows 下換行是 //r//n, Linux 下是 //n
-			String[] sqlArr = sqlSb.toString().split("(;////s*////r////n)|(;////s*////n)");
-			String sql = null;
-			for (int i = 0; i < sqlArr.length; i++) {
-				sql = sqlArr[i].replaceAll("--.*", "").trim();
-			}
-			return sql;
-		} catch (Exception ex) {
-			throw new Exception(ex.getMessage());
-		}
-	}
+    @Override
+    public boolean accept(File file) {
+      boolean acceptDir = recursive && file.isDirectory();// 接受dir目錄
+      boolean acceptClass = file.getName().endsWith("class");// 接受class文件
+      return acceptDir || acceptClass;
+    }
+  });
 
-	/**
-	 * 傳入連線來執行 SQL 指令碼檔案,這樣可與其外的資料庫操作同處一個事物中
-	 * 
-	 * @param conn    傳入資料庫連線
-	 * @param sqlFile SQL 指令碼檔案 可選引數,為空字串或為null時 預設路徑為
-	 *                src/test/resources/config/script.sql
-	 * @throws Exception
-	 */
-//    public static void execute(Connection conn,String sqlFile) throws Exception {
-//        Statement stmt = null;
-//        if(sqlFile==null||"".equals(sqlFile)){
-//            sqlFile="src/test/resources/config/script.sql";
-//        }
-//        List<String> sqlList = loadSql(sqlFile);
-//        stmt = conn.createStatement();
-//        for (String sql : sqlList) {
-//            stmt.addBatch(sql);
-//        }
-//        int[] rows = stmt.executeBatch();
-//        System.out.println("Row count:" + Arrays.toString(rows));
-//    }
-
+  for (File file : dirFiles) {
+    if (file.isDirectory()) {
+      findClassInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath(), recursive, clazzs);
+    } else {
+      String className = file.getName().substring(0, file.getName().length() - 6);
+      try {
+        clazzs.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + "." + className));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
 }

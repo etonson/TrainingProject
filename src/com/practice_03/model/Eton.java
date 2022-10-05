@@ -10,7 +10,7 @@ import lombok.Data;
 public class Eton {
 	@Id
 	private String id;
-	private String name;
+	private String nameX;
 	private String number;
 	private String sex;
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.json.JsonException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -37,12 +36,11 @@ public class MaintainDepartmentRest {
 				jsonObj.put("name", persons.get(i).getName());
 				jsonArr.put(jsonObj);
 			}
+			System.out.println(jsonObj.toString());
+			return jsonArr.toString();
 		} catch (Exception je) {
-			return jsonObj.toString();
-//			je.setStackTrace(null);
+			return null;
 		}
-		System.out.println(jsonObj.toString());
-		return jsonObj.toString();
 	}
 	
 	@Path("ex02")

@@ -67,22 +67,24 @@ public class PreparationDATAs {
 			Department department01 = new Department("RD");
 			Department department02 = new Department("IT");
 
-			Person manager01 = new Person(1, "eton");
-			Person manager02 = new Person(2, "joe");
-
 			// ---section
 			SectionPK sectionPK01 = new SectionPK("RD", "section01");
 			SectionPK sectionPK02 = new SectionPK("IT", "section02");
-			Section section01 = new Section(sectionPK01, manager01);
-			Section section02 = new Section(sectionPK02, manager02);
+			SectionPK sectionPK03 = new SectionPK("IT", "section03");
+			Section section01 = new Section(sectionPK01, person01);
+			Section section02 = new Section(sectionPK02, person02);
+			Section section03 = new Section(sectionPK03, person05);
+
 
 			List<Section> sections = new ArrayList<Section>();
 			sections.add(section01);
 			sections.add(section02);
+			sections.add(section03);
+;
 
 			department01.setSections(sections);
-			department01.setManager(manager01);
-			department02.setManager(manager02);
+			department01.setManager(person01);
+			department02.setManager(person04);
 
 			iPerson.doCreate(person01);
 			iPerson.doCreate(person02);
@@ -94,6 +96,8 @@ public class PreparationDATAs {
 			iDepartment.doCreate(department02);
 			iSection.doCreate(section01);
 			iSection.doCreate(section02);
+			iSection.doCreate(section03);
+
 
 			Order order01 = new Order("order01", 520, OrderStatus.FG);
 			Order order03 = new Order("order03", 520, OrderStatus.WIP);
@@ -140,8 +144,6 @@ public class PreparationDATAs {
 			section02.setOwnOrders(orders02);
 			iSection.doMergeOrder(section01);
 			iSection.doMergeOrder(section02);
-			
-
 		} catch (Exception e) {
 			e.fillInStackTrace();
 		}

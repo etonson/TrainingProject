@@ -5,11 +5,20 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import com.practice_02.ejb.SuperEJB;
 import com.practice_03.model.Order;
 import com.practice_03.model.Person;
+import com.practice_03.model.Section;
 import com.practice_03.remote.IMaintainDepartment;
 
 @Stateless
@@ -18,24 +27,27 @@ public class MaintainDepartment extends SuperEJB implements IMaintainDepartment 
 	@Override
 	@Transactional
 	public List<Person> retriveManagersByDepartment(String departmentName) {
-		String indexNmae = departmentName;
 		List<Person> persons = new ArrayList<Person>();
 		try {
-			Query query = em.createNativeQuery("SELECT * from Person as person"
-					+ " LEFT JOIN Section as section on  section.MANAGER_EMPLOYEE_ID =person.EMPLOYEE_ID "
-					+ " LEFT JOIN Department as department on department. MANAGER_EMPLOYEE_ID =  section.MANAGER_EMPLOYEE_ID"
-					+ "	where department.DEPARTMENT_NAME = :departmentName ", Person.class);
-			query.setParameter("departmentName", indexNmae);
-			persons = query.getResultList();
-		} catch (Exception ex) {
-			Person person = new Person();
-			person.setEmployeeId(0);
-			person.setName("no data");
-			persons.add(person);
-			return persons;
-		}
+			CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+			CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(null);
+			Root<Section> rootSection = criteriaQuery.from(Section.class);
+			
+			Join<Section,Person> joinPerson = rootSection.join("manager", JoinType.LEFT);
+			joinPerson.on(criteriaBuilder.equal(rootSection.get("manager").get("employeeId"),joinPerson.get("employeeId")));
 
-		return persons;
+			Predicate p1 = criteriaBuilder.equal(rootSection.get("department").get("name"), departmentName);
+			criteriaQuery.where(p1);
+			criteriaQuery.select(joinPerson);
+			TypedQuery<Person> typedQuery = em.createQuery(criteriaQuery);
+			persons = typedQuery.getResultList();
+			return persons;
+
+		} catch (Exception ex) {
+			ex.getCause();
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
